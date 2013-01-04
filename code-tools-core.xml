@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="code-tools-core">
+
+    <property environment="environment"/>
+    
+    <property file="${environment.CODE_TOOLS_HOME}/code-tools-core.properties"/>
+    
+    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpath="${codetools.cpd.home.directory}/lib/pmd-4.2.1.jar"/>
+
+    <taskdef resource="checkstyletask.properties" classpath="${codetools.checkstyle.home.directory}/checkstyle-5.6-all.jar"/>
+
+    <taskdef resource="simiantask.properties" classpath="${codetools.simian.home.directory}/bin/simian-2.3.33.jar"/>
+
+    <path id="pmd.classpath">
+        <fileset dir="${codetools.pmd.home.directory}/lib/" includes="**/*.jar"/>
+    </path>
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
+
+    <taskdef name="jdepend" classname="org.apache.tools.ant.taskdefs.optional.jdepend.JDependTask" classpath="${codetools.ant.home.directory}/ant-jdepend.jar"/>
+
+    <path id="cobertura.classpath">
+        <fileset dir="${codetools.cobertura.home.directory}" includes="cobertura.jar, lib/**/*.jar"/>
+    </path>
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
+    
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${codetools.findbugs.home.directory}/lib/findbugs-ant.jar"/>
+
+    
+    <target name="-cpd">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${cpd.report.directory}"/>
+        </antcall>
+        
+        <property name="cpd.temporary.file" value="${cpd.report.directory}/cpd.xml"/>
+        <property name="cpd.output.file" value="${cpd.report.directory}/${cpd.report.file}"/>
+        
+        <cpd format="xml" minimumTokenCount="30" outputFile="${cpd.temporary.file}">
+            <fileset refid="cpd.file.set"/>
+        </cpd>
+
+		<xslt in="${cpd.temporary.file}" 
+              style="${cpd.xslt.transformation.file}" 
+              out="${cpd.output.file}" 
+              failOnError="false"/>
+		
+        <delete file="${cpd.temporary.file}" quiet="true"/>
+
+	</target>
+
+    
+    <target name="-checkstyle">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${checkstyle.report.directory}"/>
+        </antcall>
+
+        <property name="checkstyle.temporary.file" value="${checkstyle.report.directory}/checkstyle-report.xml"/>
+        <property name="checkstyle.output.file" value="${checkstyle.report.directory}/${checkstyle.report.file}"/>
+
+        <checkstyle config="${checkstyle.checks.file}" failOnViolation="false">
+            <fileset refid="checkstyle.file.set"/>
+            <formatter type="xml" tofile="${checkstyle.temporary.file}"/>
+        </checkstyle>
+
+        <xslt in="${checkstyle.temporary.file}"
+              style="${checkstyle.xslt.transformation.file}"
+              out="${checkstyle.output.file}"
+              failOnError="false"/>
+
+        <delete file="${checkstyle.temporary.file}" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-simian">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${simian.report.directory}"/>
+        </antcall>
+
+        <property name="simian.temporary.file" value="${simian.report.directory}/simian-log.xml"/>
+        <property name="simian.output.file" value="${simian.report.directory}/${simian.report.file}"/>
+
+        <simian>
+            <fileset refid="simian.file.set"/>
+            <formatter type="xml" toFile="${simian.temporary.file}"/>
+        </simian>
+
+        <xslt in="${simian.temporary.file}" 
+            out="${simian.output.file}" 
+            style="${simian.xslt.transformation.file}" 
+            failOnError="false"/>
+
+        <delete file="${simian.temporary.file}" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-findbugs">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${findbugs.report.directory}"/>
+        </antcall>
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${findbugs.work.directory}"/>
+        </antcall>
+
+        <antcall target="-compile_to">
+            <param name="destination.directory" value="${findbugs.work.directory}"/>
+        </antcall>
+
+        <property name="findbugs.output.file" value="${findbugs.report.directory}/${findbugs.report.file}"/>
+        
+        <findbugs home="${findbugs.home.directory}" output="html" outputFile="${findbugs.output.file}" jvmargs="-Xmx512m">
+			<sourcePath>
+                <fileset refid="findbugs.file.set"/>
+            </sourcePath>
+
+            <class location="${findbugs.work.directory}"/>
+		</findbugs>
+
+        <delete dir="${findbugs.work.directory}" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-jdepend">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${jdepend.report.directory}"/>
+        </antcall>
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${jdepend.work.directory}"/>
+        </antcall>
+
+        <antcall target="-compile_to">
+            <param name="destination.directory" value="${jdepend.work.directory}"/>
+        </antcall>
+
+        <property name="jdepend.temporary.file" value="${jdepend.work.directory}/jdepend-report.xml"/>
+        <property name="jdepend.temporary.dot.file" value="${jdepend.work.directory}/jdepend-report.dot"/>
+
+        <property name="jdepend.output.html.file" value="${jdepend.report.directory}/${jdepend.report.html.file}"/>
+        <property name="jdepend.output.gif.file" value="${jdepend.report.directory}/${jdepend.report.gif.file}"/>
+        
+        <jdepend format="xml" outputfile="${jdepend.temporary.file}">
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <classespath>
+                <pathelement location="${jdepend.work.directory}"/>
+            </classespath>
+        </jdepend>
+
+        <xslt in="${jdepend.temporary.file}" 
+            out="${jdepend.output.html.file}"
+            style="${jdepend.html.xslt.transformation.file}" 
+            failOnError="false"/>
+
+		<xslt in="${jdepend.temporary.file}" 
+            out="${jdepend.temporary.dot.file}"
+            style="${jdepend.dot.xslt.transformation.file}" 
+            failOnError="false"/>
+
+        <exec executable="${jdepend.dot.home.directory}/bin/dot">
+            <arg value="-Tgif"/>
+            <arg value="${jdepend.temporary.dot.file}"/>
+            <arg value="-o"/>
+            <arg value="${jdepend.output.gif.file}"/>
+        </exec>
+
+        <delete dir="${jdepend.work.directory}" includeEmptyDirs="true" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-pmd">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${pmd.report.directory}"/>
+        </antcall>
+
+        <property name="pmd.temporary.file" value="${pmd.report.directory}/pmd-report.xml"/>
+        <property name="pmd.output.file" value="${pmd.report.directory}/${pmd.report.file}"/>
+        
+        <pmd rulesetfiles="${pmd.ruleset.file}">
+            <fileset refid="pmd.file.set"/>
+            <formatter type="xml" toFile="${pmd.temporary.file}"/>
+        </pmd>
+
+        <xslt in="${pmd.temporary.file}" 
+            style="${pmd.xslt.transformation.file}"
+            out="${pmd.output.file}" 
+            failOnError="false"/>
+
+        <delete file="${pmd.temporary.file}" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-junit">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${junit.report.directory}"/>
+        </antcall>
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${junit.work.directory}"/>
+        </antcall>
+
+        <antcall target="-compile_with_tests_to">
+            <param name="destination.directory" value="${junit.work.directory}"/>
+        </antcall>
+
+        <junit printsummary="yes" fork="yes" forkmode="once">
+            <formatter type="xml"/>
+
+            <classpath refid="junit.execution.dependencies"/>
+            <classpath location="${junit.work.directory}"/>
+
+            <batchtest todir="${junit.report.directory}">
+                <fileset refid="junit.file.set"/>
+            </batchtest>
+        </junit>
+
+        <fileset id="junit.xml.report.files" dir="${junit.report.directory}">
+            <include name="TEST*.xml"/>
+        </fileset>
+        
+        <junitreport todir="${junit.report.directory}">
+            <fileset refid="junit.xml.report.files"/>
+            <report format="frames" todir="${junit.report.directory}"/>
+        </junitreport>
+
+        <delete>
+            <fileset refid="junit.xml.report.files"/>
+        </delete>
+        
+        <delete dir="${junit.work.directory}" includeEmptyDirs="true" quiet="true"/>
+
+    </target>
+
+
+    <target name="-cobertura">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${cobertura.report.directory}"/>
+        </antcall>
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${cobertura.work.directory}"/>
+        </antcall>
+
+        <antcall target="-compile_with_tests_to">
+            <param name="destination.directory" value="${cobertura.work.directory}"/>
+        </antcall>
+
+        <property name="cobertura.data.file" value="${cobertura.work.directory}/cobertura.ser"/>
+        
+        <cobertura-instrument todir="${cobertura.work.directory}" datafile="${cobertura.data.file}">		
+            <fileset dir="${cobertura.work.directory}">
+                <include name="**/*.class"/>
+            </fileset>			
+        </cobertura-instrument>
+
+        <junit fork="yes" forkmode="once">
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.data.file}"/>
+
+            <classpath location="${cobertura.work.directory}"/>
+            <classpath refid="cobertura.execution.dependencies"/>
+            <classpath refid="cobertura.classpath"/>
+
+            <batchtest>
+                <fileset refid="cobertura.file.set"/>
+            </batchtest>
+        </junit>
+
+        <cobertura-report format="html" destdir="${cobertura.report.directory}" srcdir="${cobertura.source.directory}" datafile="${cobertura.data.file}"/>
+
+        <delete dir="${cobertura.work.directory}" includeEmptyDirs="true" quiet="true"/>
+
+    </target>
+
+    
+    <target name="-prepare_directory">
+        <delete dir="${param.dir}" includeEmptyDirs="true" quiet="true"/>
+        <mkdir dir="${param.dir}"/>
+    </target>
+
+    <target name="create">
+    </target>
+    
+</project>

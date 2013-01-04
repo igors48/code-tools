@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="code-tools-launcher">
+
+    <property environment="environment"/>
+    <import file="${environment.CODE_TOOLS_HOME}/code-tools-core.xml"/>
+
+    <target name="junit">
+
+        <antcall target="-junit">
+
+            <reference refid="${codetools.junit.execution.dependencies}" 
+                   torefid="junit.execution.dependencies"/>
+            <reference refid="${codetools.junit.file.set}" 
+                   torefid="junit.file.set"/>
+            <param name="junit.work.directory"
+                   value="${codetools.junit.work.directory}"/>
+            <param name="junit.report.directory"
+                   value="${codetools.junit.report.directory}"/>
+
+        </antcall>
+
+    </target>
+
+	
+    <target name="cobertura">
+
+        <antcall target="-cobertura">
+
+            <reference refid="${codetools.cobertura.execution.dependencies}" 
+                   torefid="cobertura.execution.dependencies"/>
+            <reference refid="${codetools.cobertura.file.set}" 
+                   torefid="cobertura.file.set"/>
+            <param name="cobertura.report.directory"
+                   value="${codetools.cobertura.report.directory}"/>
+            <param name="cobertura.work.directory"
+                   value="${codetools.cobertura.work.directory}"/>
+            <param name="cobertura.source.directory"
+                   value="${codetools.cobertura.source.directory}"/>
+
+		</antcall>
+
+    </target>
+
+	
+    <target name="pmd">
+
+        <antcall target="-pmd">
+
+            <reference refid="${codetools.pmd.file.set}" 
+                   torefid="pmd.file.set"/>
+            <param name="pmd.report.directory" 
+                   value="${codetools.pmd.report.directory}"/>
+            <param name="pmd.ruleset.file" 
+                   value="${codetools.pmd.ruleset.file}"/>
+            <param name="pmd.report.file"
+                   value="${codetools.pmd.report.file}"/> 
+            <param name="pmd.xslt.transformation.file" 
+                   value="${codetools.pmd.xslt.transformation.file}"/>
+
+         </antcall>
+
+    </target>
+
+	
+    <target name="jdepend">
+
+        <antcall target="-jdepend">
+
+            <param name="jdepend.work.directory"
+                   value="${codetools.jdepend.work.directory}"/>
+            <param name="jdepend.report.directory"
+                   value="${codetools.jdepend.report.directory}"/>
+            <param name="jdepend.report.html.file"
+                   value="${codetools.jdepend.report.html.file}"/>
+            <param name="jdepend.report.gif.file"
+                   value="${codetools.jdepend.report.gif.file}"/>
+            <param name="jdepend.dot.xslt.transformation.file" 
+                   value="${codetools.jdepend.dot.xslt.transformation.file}"/>
+            <param name="jdepend.dot.home.directory" 
+                   value="${codetools.jdepend.dot.home.directory}"/>
+            <param name="jdepend.html.xslt.transformation.file" 
+                   value="${codetools.jdepend.html.xslt.transformation.file}"/>
+
+        </antcall>
+
+    </target>
+
+	
+    <target name="findbugs">
+
+        <antcall target="-findbugs">
+
+            <reference refid="${codetools.findbugs.file.set}" 
+                   torefid="findbugs.file.set"/>
+            <param name="findbugs.home.directory"
+                   value="${codetools.findbugs.home.directory}"/>
+            <param name="findbugs.report.directory"
+                   value="${codetools.findbugs.report.directory}"/>
+            <param name="findbugs.work.directory"
+                   value="${codetools.findbugs.work.directory}"/>
+            <param name="findbugs.report.file"
+                   value="${codetools.findbugs.report.file}"/>
+
+        </antcall>
+
+    </target>
+
+	
+    <target name="simian">
+
+        <antcall target="-simian">
+
+            <reference refid="${codetools.simian.file.set}" 
+                   torefid="simian.file.set"/>
+            <param name="simian.report.directory"                            
+                   value="${codetools.simian.report.directory}"/>
+            <param name="simian.report.file"
+                   value="${codetools.simian.report.file}"/>
+            <param name="simian.xslt.transformation.file" 
+                   value="${codetools.simian.xslt.transformation.file}"/>
+
+        </antcall>
+
+    </target>
+
+    
+	<target name="checkstyle">
+
+        <antcall target="-checkstyle">
+
+            <reference refid="${codetools.checkstyle.file.set}" 
+                   torefid="checkstyle.file.set"/>
+            <param name="checkstyle.report.directory"
+                   value="${codetools.checkstyle.report.directory}"/>
+            <param name="checkstyle.report.file"
+                   value="${codetools.checkstyle.report.file}"/>
+            <param name="checkstyle.checks.file" 
+                   value="${codetools.checkstyle.checks.file}"/>
+            <param name="checkstyle.xslt.transformation.file" 
+                   value="${codetools.checkstyle.xslt.transformation.file}"/>
+
+        </antcall>
+
+    </target>
+
+    
+	<target name="cpd">
+
+        <antcall target="-cpd">
+
+            <reference refid="${codetools.cpd.file.set}" 
+                   torefid="cpd.file.set"/>
+            <param name="cpd.report.directory"
+                   value="${codetools.cpd.report.directory}"/>
+            <param name="cpd.report.file"
+                   value="${codetools.cpd.report.file}"/>
+            <param name="cpd.xslt.transformation.file"
+                   value="${codetools.cpd.xslt.transformation.file}"/>
+
+        </antcall>
+
+    </target>
+
+    
+	<target name="reports">
+
+        <antcall target="-prepare_directory">
+            <param name="param.dir" 
+                   value="${codetools.project.report.directory}"/>
+        </antcall>
+
+        <antcall target="junit"/>
+        <antcall target="cobertura"/>
+        <antcall target="pmd"/>
+        <antcall target="cpd"/>
+        <antcall target="checkstyle"/>
+        <antcall target="simian"/>
+        <antcall target="findbugs"/>
+        <antcall target="jdepend"/>
+
+    </target>
+
+</project>
