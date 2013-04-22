@@ -202,6 +202,8 @@
     
     <target name="-junit">
 
+        <property name="junit.work.directory" value="${junit.report.directory}\work\"/>
+        
         <antcall target="-prepare_directory">
             <param name="param.dir" value="${junit.report.directory}"/>
         </antcall>
@@ -238,8 +240,6 @@
             <fileset refid="junit.xml.report.files"/>
         </delete>
         
-       <!-- <delete dir="${junit.work.directory}" includeEmptyDirs="true" quiet="true"/> -->
-
     </target>
 
 

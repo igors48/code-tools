@@ -12,8 +12,6 @@
                    torefid="junit.execution.dependencies"/>
             <reference refid="${codetools.junit.file.set}" 
                    torefid="junit.file.set"/>
-            <param name="junit.work.directory"
-                   value="${codetools.junit.work.directory}"/>
             <param name="junit.report.directory"
                    value="${codetools.junit.report.directory}"/>
 
