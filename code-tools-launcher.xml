@@ -65,6 +65,8 @@
 	
     <target name="jdepend">
 
+        <echo message="jdepend is not compatible with JSE7"/>
+        <!--
         <antcall target="-jdepend">
 
             <param name="jdepend.work.directory"
@@ -83,7 +85,7 @@
                    value="${codetools.jdepend.html.xslt.transformation.file}"/>
 
         </antcall>
-
+        -->
     </target>
 
 	
@@ -177,7 +179,7 @@
         <antcall target="checkstyle"/>
         <antcall target="simian"/>
         <antcall target="findbugs"/>
-        <antcall target="jdepend"/>
+        <!--<antcall target="jdepend"/>-->
 
     </target>
 
