@@ -238,7 +238,7 @@
             <fileset refid="junit.xml.report.files"/>
         </delete>
         
-        <delete dir="${junit.work.directory}" includeEmptyDirs="true" quiet="true"/>
+       <!-- <delete dir="${junit.work.directory}" includeEmptyDirs="true" quiet="true"/> -->
 
     </target>
 
