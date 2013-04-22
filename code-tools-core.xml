@@ -297,15 +297,15 @@
             <param name="destination.directory" value="${jacoco.work.directory}"/>
         </antcall>
 
-        <jacoco:coverage>
+        <jacoco:coverage append="false">
             
             <junit fork="true" forkmode="once">
 
                 <classpath location="${jacoco.work.directory}"/>
-                <classpath refid="cobertura.execution.dependencies"/>
+                <classpath refid="jacoco.execution.dependencies"/>
                 
                 <batchtest>
-                    <fileset refid="cobertura.file.set"/>
+                    <fileset refid="jacoco.file.set"/>
                 </batchtest>
             </junit>
     
@@ -317,7 +317,7 @@
                 <file file="jacoco.exec"/>
             </executiondata>
                         
-            <structure name="Example Project">
+            <structure name="Code coverage">
                 <classfiles>
                     <fileset dir="${jacoco.work.directory}"/>
                 </classfiles>
@@ -326,7 +326,7 @@
                 </sourcefiles>
             </structure>
                         
-            <html destdir="report"/>
+            <html destdir="${codetools.jacoco.report.directory}"/>
                         
         </jacoco:report>
         

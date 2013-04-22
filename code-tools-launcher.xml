@@ -168,14 +168,16 @@
 	<target name="jacoco">
 
         <antcall target="-jacoco">
-            <reference refid="${codetools.cobertura.execution.dependencies}" 
-                   torefid="cobertura.execution.dependencies"/>
-            <reference refid="${codetools.cobertura.file.set}" 
-                   torefid="cobertura.file.set"/>
+            <reference refid="${codetools.jacoco.execution.dependencies}" 
+                   torefid="jacoco.execution.dependencies"/>
+            <reference refid="${codetools.jacoco.file.set}" 
+                   torefid="jacoco.file.set"/>
             <param name="jacoco.work.directory"
-                   value="${codetools.cobertura.work.directory}"/>
+                   value="${codetools.jacoco.work.directory}"/>
             <param name="jacoco.source.directory"
-                   value="${codetools.cobertura.source.directory}"/>
+                   value="${codetools.jacoco.source.directory}"/>
+            <param name="jacoco.report.directory"
+                   value="${codetools.jacoco.report.directory}"/>
         </antcall>
         
     </target>
