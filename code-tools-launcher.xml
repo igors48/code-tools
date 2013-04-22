@@ -165,6 +165,22 @@
     </target>
 
     
+	<target name="jacoco">
+
+        <antcall target="-jacoco">
+            <reference refid="${codetools.cobertura.execution.dependencies}" 
+                   torefid="cobertura.execution.dependencies"/>
+            <reference refid="${codetools.cobertura.file.set}" 
+                   torefid="cobertura.file.set"/>
+            <param name="jacoco.work.directory"
+                   value="${codetools.cobertura.work.directory}"/>
+            <param name="jacoco.source.directory"
+                   value="${codetools.cobertura.source.directory}"/>
+        </antcall>
+        
+    </target>
+    
+    
 	<target name="reports">
 
         <antcall target="-prepare_directory">

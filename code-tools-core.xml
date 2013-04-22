@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="code-tools-core">
+<project name="code-tools-core" xmlns:jacoco="antlib:org.jacoco.ant">
 
     <property environment="environment"/>
     
@@ -25,6 +25,9 @@
     
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${codetools.findbugs.home.directory}/lib/findbugs-ant.jar"/>
 
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="${codetools.jacoco.home.directory}/lib/jacocoant.jar"/>
+    </taskdef>
     
     <target name="-cpd">
 
@@ -283,6 +286,52 @@
 
     </target>
 
+    
+    <target name="-jacoco">
+    
+        <antcall target="-prepare_directory">
+            <param name="param.dir" value="${jacoco.work.directory}"/>
+        </antcall>
+
+        <antcall target="-compile_with_tests_to">
+            <param name="destination.directory" value="${jacoco.work.directory}"/>
+        </antcall>
+
+        <jacoco:coverage>
+            
+            <junit fork="true" forkmode="once">
+
+                <classpath location="${jacoco.work.directory}"/>
+                <classpath refid="cobertura.execution.dependencies"/>
+                
+                <batchtest>
+                    <fileset refid="cobertura.file.set"/>
+                </batchtest>
+            </junit>
+    
+        </jacoco:coverage>
+
+        <jacoco:report>
+                        
+            <executiondata>
+                <file file="jacoco.exec"/>
+            </executiondata>
+                        
+            <structure name="Example Project">
+                <classfiles>
+                    <fileset dir="${jacoco.work.directory}"/>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${jacoco.source.directory}"/>
+                </sourcefiles>
+            </structure>
+                        
+            <html destdir="report"/>
+                        
+        </jacoco:report>
+        
+    </target>
+    
     
     <target name="-prepare_directory">
         <delete dir="${param.dir}" includeEmptyDirs="true" quiet="true"/>
