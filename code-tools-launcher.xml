@@ -22,6 +22,9 @@
 	
     <target name="cobertura">
 
+        <echo message="cobertura is not compatible with JSE7"/>
+        
+        <!--
         <antcall target="-cobertura">
 
             <reference refid="${codetools.cobertura.execution.dependencies}" 
@@ -36,7 +39,7 @@
                    value="${codetools.cobertura.source.directory}"/>
 
 		</antcall>
-
+        -->
     </target>
 
 	
@@ -168,7 +171,7 @@
         </antcall>
 
         <antcall target="junit"/>
-        <antcall target="cobertura"/>
+        <!--<antcall target="cobertura"/>-->
         <antcall target="pmd"/>
         <antcall target="cpd"/>
         <antcall target="checkstyle"/>
