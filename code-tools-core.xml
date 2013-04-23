@@ -289,6 +289,8 @@
     
     <target name="-jacoco">
     
+        <property name="jacoco.destination.file" value="${jacoco.work.directory}/jacoco.exec"/>
+        
         <antcall target="-prepare_directory">
             <param name="param.dir" value="${jacoco.work.directory}"/>
         </antcall>
@@ -297,7 +299,7 @@
             <param name="destination.directory" value="${jacoco.work.directory}"/>
         </antcall>
 
-        <jacoco:coverage append="false">
+        <jacoco:coverage append="false" destfile="${jacoco.destination.file}">
             
             <junit fork="true" forkmode="once">
 
@@ -314,7 +316,7 @@
         <jacoco:report>
                         
             <executiondata>
-                <file file="jacoco.exec"/>
+                <file file="${jacoco.destination.file}"/>
             </executiondata>
                         
             <structure name="Code coverage">
