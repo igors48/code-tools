@@ -192,6 +192,7 @@
 
         <antcall target="junit"/>
         <!--<antcall target="cobertura"/>-->
+        <antcall target="jacoco"/>
         <antcall target="pmd"/>
         <antcall target="cpd"/>
         <antcall target="checkstyle"/>
