@@ -7,7 +7,7 @@
     
     <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpath="${codetools.cpd.home.directory}/lib/pmd-4.2.1.jar"/>
 
-    <taskdef resource="checkstyletask.properties" classpath="${codetools.checkstyle.home.directory}/checkstyle-5.6-all.jar"/>
+    <taskdef resource="checkstyletask.properties" classpath="${codetools.checkstyle.home.directory}/checkstyle-5.7-all.jar"/>
 
     <taskdef resource="simiantask.properties" classpath="${codetools.simian.home.directory}/bin/simian-2.3.33.jar"/>
 
@@ -321,7 +321,12 @@
                         
             <structure name="Code coverage">
                 <classfiles>
-                    <fileset dir="${jacoco.work.directory}"/>
+                    <fileset dir="${jacoco.work.directory}">
+                        <!--TODO remove this per project customization-->
+                        <exclude name="**/unit/**/*.class" />
+                        <exclude name="**/rest/**/*.class" />
+                        <exclude name="**/gae/**/*.class" />
+                    </fileset>
                 </classfiles>
                 <sourcefiles encoding="UTF-8">
                     <fileset dir="${jacoco.source.directory}"/>
